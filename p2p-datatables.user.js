@@ -1,17 +1,17 @@
 // ==UserScript==
 // @name         P2P Datatables
 // @namespace    http://juan.one/helvetas
-// @version      1.3
+// @version      1.4
 // @description  adds Datatables to P2P Backend.
 // @author       http://juan.one/1
 // @require      https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.12.0/moment.min.js
-// @require      https://cdn.datatables.net/t/dt/jq-2.2.0,jszip-2.5.0,pdfmake-0.1.18,dt-1.10.11,b-1.1.2,b-colvis-1.1.2,b-flash-1.1.2,b-html5-1.1.2,b-print-1.1.2,r-2.0.2,sc-1.4.1,se-1.1.2/datatables.min.js
-// @resource     datatables_css https://cdn.datatables.net/t/dt/jq-2.2.0,jszip-2.5.0,pdfmake-0.1.18,dt-1.10.11,b-1.1.2,b-colvis-1.1.2,b-flash-1.1.2,b-html5-1.1.2,b-print-1.1.2,r-2.0.2,sc-1.4.1,se-1.1.2/datatables.min.css
-// @resource     sort_asc https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.11/images/sort_asc.png
-// @resource     sort_asc_disabled https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.11/images/sort_asc_disabled.png
-// @resource     sort_both https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.11/images/sort_both.png
-// @resource     sort_desc https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.11/images/sort_desc.png
-// @resource     sort_desc_disabled https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.11/images/sort_desc_disabled.png
+// @require      https://cdn.datatables.net/v/bs/jq-2.2.4/jszip-2.5.0/pdfmake-0.1.18/dt-1.10.13/b-1.2.4/b-colvis-1.2.4/b-flash-1.2.4/b-html5-1.2.4/b-print-1.2.4/r-2.1.1/se-1.2.0/datatables.min.js
+// @resource     datatables_css https://cdn.datatables.net/v/bs/jq-2.2.4/jszip-2.5.0/pdfmake-0.1.18/dt-1.10.13/b-1.2.4/b-colvis-1.2.4/b-flash-1.2.4/b-html5-1.2.4/b-print-1.2.4/r-2.1.1/se-1.2.0/datatables.min.css
+// @resource     sort_asc https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.13/images/sort_asc.png
+// @resource     sort_asc_disabled https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.13/images/sort_asc_disabled.png
+// @resource     sort_both https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.13/images/sort_both.png
+// @resource     sort_desc https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.13/images/sort_desc.png
+// @resource     sort_desc_disabled https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.13/images/sort_desc_disabled.png
 // @match        *://p2p.getunik.net/organisations/helvetas/*
 // @match        *://helvetas.raisenow.net/organisations/helvetas/*
 // @grant        GM_addStyle
@@ -30,7 +30,7 @@
 
       GM_addStyle(GM_getResourceText("datatables_css"));
 
-      GM_addStyle("input[type='text'], textarea { width: 100%; } textarea {height: 5em;} table.dataTable thead .sorting_asc { background-image: url(" + (GM_getResourceURL('sort_asc')) + "); } table.dataTable thead .sorting_asc_disabled { background-image: url(" + (GM_getResourceURL('sort_asc_disabled')) + "); } table.dataTable thead .sorting { background-image: url(" + (GM_getResourceURL('sort_both')) + "); } table.dataTable thead .sorting_desc { background-image: url(" + (GM_getResourceURL('sort_desc')) + "); } table.dataTable thead .sorting_desc_disabled { background-image: url(" + (GM_getResourceURL('sort_desc_disabled')) + "); } .table-striped tbody>tr:nth-child(odd)>td, .table-striped tbody>tr:nth-child(odd)>th { background-color: inherit; } .dt-button { margin-right: 1em; }");
+      GM_addStyle("ul.pagination li { display: inline; margin: 0.3rem; } input[type='text'], textarea, table { width: 100%; } textarea {height: 5em;} table.dataTable thead .sorting_asc:after { content: '▲'; } table.dataTable thead .sorting_asc_disabled:after { content: '△';  } table.dataTable thead .sorting:after { content: '♦︎'; } table.dataTable thead .sorting_desc:after { content: '▼'; } table.dataTable thead .sorting_desc_disabled:after { content: '▽'; } .table-striped tbody>tr:nth-child(odd)>td, .table-striped tbody>tr:nth-child(odd)>th { background-color: inherit; } .dt-button { margin-right: 1em; }");
 
       $.extend($.fn.dataTable.defaults, {
         order: [[0, 'desc']],
