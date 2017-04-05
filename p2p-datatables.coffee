@@ -6,29 +6,18 @@ if document.location.hostname == "p2p.getunik.net"
 # //cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css
 # GM_addStyle("body { color: white; background-color: black; } img { border: 0; }");
 GM_addStyle(GM_getResourceText("datatables_css"))
-GM_addStyle("
-  input[type='text'], textarea { width: 100%; }
+GM_addStyle "
+  ul.pagination li { display: inline; margin: 0.3rem; }
+  input[type='text'], textarea, table { width: 100%; }
   textarea {height: 5em;}
-  table.dataTable thead .sorting_asc {
-    background-image: url(#{GM_getResourceURL('sort_asc')});
-  }
-  table.dataTable thead .sorting_asc_disabled {
-    background-image: url(#{GM_getResourceURL('sort_asc_disabled')});
-  }
-  table.dataTable thead .sorting {
-    background-image: url(#{GM_getResourceURL('sort_both')});
-  }
-  table.dataTable thead .sorting_desc {
-    background-image: url(#{GM_getResourceURL('sort_desc')});
-  }
-  table.dataTable thead .sorting_desc_disabled {
-    background-image: url(#{GM_getResourceURL('sort_desc_disabled')});
-  }
-  .table-striped tbody>tr:nth-child(odd)>td, .table-striped tbody>tr:nth-child(odd)>th {
-    background-color: inherit;
-  }
+  table.dataTable thead .sorting_asc:after { content: '▲'; }
+  table.dataTable thead .sorting_asc_disabled:after { content: '△';  }
+  table.dataTable thead .sorting:after { content: '♦︎'; }
+  t.able.dataTable thead .sorting_desc:after { content: '▼'; }
+  table.dataTable thead .sorting_desc_disabled:after { content: '▽'; }
+  .table-striped tbody>tr:nth-child(odd)>td, .table-striped tbody>tr:nth-child(odd)>th { background-color: inherit; }
   .dt-button { margin-right: 1em; }
-")
+"
 
 $.extend $.fn.dataTable.defaults,
     order: [[0, 'desc']]
@@ -206,9 +195,57 @@ add_campaign_details = (location) =>
     $('.span6').addClass('span12').removeClass('span6')
     table.buttons().container().appendTo( $('.col-sm-6:eq(0)', table.table().container() ) )
 
+$.fn.extend
+  addCustomTexts: (options) ->
+    settings =
+      debug: false
+
+    settings = $.extend settings, options
+
+    log = (message) ->
+      console?.log message if settings.debug
+
+    return @each () ->
+      edit_url = $("> td:nth-child(6) > a:nth-child(1)", this)[0].href # get url
+      log edit_url
+      $("> td:nth-child(5)", this)
+      .after('<td class="custom-text custom-text-en"></td>') # add tbody td
+      .after('<td class="custom-text custom-text-it"></td>') # add tbody td
+      .after('<td class="custom-text custom-text-fr"></td>') # add tbody td
+      .after('<td class="custom-text custom-text-de"></td>') # add tbody td
+      $("> td:nth-child(6)", this)
+      .load "#{edit_url}?locale=de #getunik_p2pentitiesbundle_customtext_text", ( response, status, xhr ) -> # add text in de
+        $(this).append "<a href='#{edit_url}?locale=de'>edit de</a>" if status == "success"
+      $("> td:nth-child(7)", this)
+      .load "#{edit_url}?locale=fr #getunik_p2pentitiesbundle_customtext_text", ( response, status, xhr ) -> # add text in fr
+        $(this).append "<a href='#{edit_url}?locale=fr'>edit fr</a>" if status == "success"
+      $("> td:nth-child(8)", this)
+      .load "#{edit_url}?locale=it #getunik_p2pentitiesbundle_customtext_text", ( response, status, xhr ) -> # add text in it
+        $(this).append "<a href='#{edit_url}?locale=it'>edit it</a>" if status == "success"
+      $("> td:nth-child(9)", this)
+      .load "#{edit_url}?locale=en #getunik_p2pentitiesbundle_customtext_text", ( response, status, xhr ) -> # add text in en
+        $(this).append "<a href='#{edit_url}?locale=en'>edit en</a>" if status == "success"
+
+$.fn.extend
+  addCustomTextHeaders: (options) ->
+    settings =
+      debug: false
+
+    settings = $.extend settings, options
+
+    log = (message) ->
+      console?.log message if settings.debug
+
+    return @each () ->
+      $("> thead > tr > th:nth-child(5)", this)
+      .after('<th class="custom-text-head custom-text-head-en">EN</th>')
+      .after('<th class="custom-text-head custom-text-head-it">IT</th>')
+      .after('<th class="custom-text-head custom-text-head-fr">FR</th>')
+      .after('<th class="custom-text-head custom-text-head-de">DE</th>')
 
 here = window.location.pathname
 if here == "/organisations/helvetas/campaign/list"
+  $('.span6').addClass('span12').removeClass('span6')
   $("td:nth-child(0n+4)").addDateOrder
     formatString: "DD.MM.YYYY"
   $("td:nth-child(0n+5)").addDateOrder
@@ -223,8 +260,15 @@ else if here == "/organisations/helvetas/urlalias/list"
   table = $('table').DataTable()
   $('.span6').addClass('span12').removeClass('span6')
   table.buttons().container().appendTo( $('.col-sm-6:eq(0)', table.table().container() ) )
+else if here == "/organisations/helvetas/translations/customtexts/list"
+  #$("table").addCustomTextHeaders()
+  $("table").addCustomTextHeaders()
+  $("table>tbody>tr").addCustomTexts()
+  $('.span6').addClass('span12').removeClass('span6')
+  # DataTable has proven to be unreliable with async
+  # table = $('table').DataTable()
 else
   # init Datatables
-  table = $('table').DataTable()
   $('.span6').addClass('span12').removeClass('span6')
+  table = $('table').DataTable()
   table.buttons().container().appendTo( $('.col-sm-6:eq(0)', table.table().container() ) )
